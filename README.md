@@ -13,5 +13,18 @@ spring {
 }
 ```
 
-## Still to come
-* Support for profiles inside application.groovy (actually, this is where using groovy script would be most useful with regards to re-use etc.)
+Profile specific sections in application.groovy:
+
+```
+spring {
+  profiles {
+    dev {
+      displayname = 'development'
+    }
+    prod {
+      displayname = 'production'
+    }
+  }
+}     
+```
+When the application is started with spring.profiles.active=dev displayname will be set to 'development', ...Up

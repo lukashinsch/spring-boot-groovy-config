@@ -27,4 +27,4 @@ spring {
   }
 }     
 ```
-When the application is started with spring.profiles.active=dev displayname will be set to 'development', ...Up
+When the application is started with spring.profiles.active=dev displayname will be set to 'development', ...

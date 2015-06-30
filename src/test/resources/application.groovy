@@ -3,10 +3,17 @@ info {
     conflict = 'main'
 }
 
-profile {
-    test {
-        info {
-            key = 'value'
+spring {
+    profiles {
+        test {
+            info {
+                key = 'value'
+            }
+        }
+        test2 {
+            info {
+                key2 = 'value2'
+            }
         }
     }
 }

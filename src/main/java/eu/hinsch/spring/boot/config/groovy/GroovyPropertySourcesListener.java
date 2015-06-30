@@ -10,6 +10,8 @@ import org.springframework.core.env.PropertiesPropertySource;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -19,6 +21,7 @@ import static java.util.Arrays.asList;
  */
 public class GroovyPropertySourcesListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
+    private static final String PREFIX = "spring.profiles.";
     private final ConfigSlurper configSlurper = new ConfigSlurper();
     private ConfigurableEnvironment environment;
 
@@ -61,6 +64,37 @@ public class GroovyPropertySourcesListener implements ApplicationListener<Applic
 
     private void addFromUrl(String configName, URL url) {
         ConfigObject parse = configSlurper.parse(url);
-        environment.getPropertySources().addLast(new PropertiesPropertySource(configName, parse.toProperties()));
+        environment.getPropertySources().addLast(new PropertiesPropertySource(configName, filterProfiles(parse)));
+    }
+
+    private Properties filterProfiles(ConfigObject parse) {
+        Properties properties = new Properties();
+        for (Map.Entry<Object,Object> entry : parse.toProperties().entrySet()) {
+            if (isActive(entry.getKey().toString())) {
+                properties.put(stripProfilePrefix(entry.getKey().toString()), entry.getValue());
+            }
+        }
+        return properties;
+    }
+
+    private boolean isActive(String key) {
+        if (isNotProfileSpecific(key)) {
+            return true;
+        }
+        String remainder = key.substring(PREFIX.length());
+        String profile = remainder.substring(0, remainder.indexOf("."));
+        return environment.acceptsProfiles(profile);
+    }
+
+    private boolean isNotProfileSpecific(String key) {
+        return !key.startsWith(PREFIX);
+    }
+
+    private String stripProfilePrefix(String key) {
+        if (isNotProfileSpecific(key)) {
+            return key;
+        }
+        String remainder = key.substring(PREFIX.length());
+        return remainder.substring(remainder.indexOf(".") + 1);
     }
 }

@@ -5,16 +5,16 @@ import groovy.util.ConfigSlurper;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.MapPropertySource;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by lh on 12/04/15.
@@ -65,17 +65,15 @@ public class GroovyPropertySourcesListener implements ApplicationListener<Applic
 
     private void addFromUrl(String configName, URL url) {
         ConfigObject parse = configSlurper.parse(url);
-        environment.getPropertySources().addLast(new PropertiesPropertySource(configName, filterProfiles(parse)));
+        environment.getPropertySources().addLast(new MapPropertySource(configName, filterProfiles(parse)));
     }
 
-    private Properties filterProfiles(ConfigObject parse) {
-        Properties properties = new Properties();
-        parse.toProperties()
+    private Map<String,Object> filterProfiles(ConfigObject parse) {
+        return parse.toProperties()
                 .entrySet()
                 .stream()
                 .filter(entry -> isActive(entry.getKey().toString()))
-                .forEach(entry -> properties.put(stripProfilePrefix(entry.getKey().toString()), entry.getValue()));
-        return properties;
+                .collect(toMap(entry -> stripProfilePrefix(entry.getKey().toString()), Map.Entry::getValue));
     }
 
     private boolean isActive(String key) {

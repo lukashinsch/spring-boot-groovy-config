@@ -22,6 +22,7 @@ import static java.util.Arrays.asList;
 public class GroovyPropertySourcesListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
     private static final String PREFIX = "spring.profiles.";
+    private static final String CONFIG_FILE_PREFIX = "application";
     private final ConfigSlurper configSlurper = new ConfigSlurper();
     private ConfigurableEnvironment environment;
 
@@ -32,15 +33,15 @@ public class GroovyPropertySourcesListener implements ApplicationListener<Applic
         environmentProfileFiles().forEach(this::addFromFile);
         environmentProfileFiles().forEach(this::addFromClasspath);
 
-        addFromFile("application.groovy");
-        addFromClasspath("application.groovy");
+        addFromFile(CONFIG_FILE_PREFIX + ".groovy");
+        addFromClasspath(CONFIG_FILE_PREFIX + ".groovy");
 
     }
 
     private Stream<String> environmentProfileFiles() {
         return asList(environment.getActiveProfiles())
                 .stream()
-                .map(profile -> "application-" + profile + ".groovy");
+                .map(profile -> CONFIG_FILE_PREFIX + "-" + profile + ".groovy");
     }
 
     private void addFromFile(String filename) {
@@ -69,32 +70,36 @@ public class GroovyPropertySourcesListener implements ApplicationListener<Applic
 
     private Properties filterProfiles(ConfigObject parse) {
         Properties properties = new Properties();
-        for (Map.Entry<Object,Object> entry : parse.toProperties().entrySet()) {
-            if (isActive(entry.getKey().toString())) {
-                properties.put(stripProfilePrefix(entry.getKey().toString()), entry.getValue());
-            }
-        }
+        parse.toProperties()
+                .entrySet()
+                .stream()
+                .filter(entry -> isActive(entry.getKey().toString()))
+                .forEach(entry -> properties.put(stripProfilePrefix(entry.getKey().toString()), entry.getValue()));
         return properties;
     }
 
     private boolean isActive(String key) {
-        if (isNotProfileSpecific(key)) {
-            return true;
-        }
-        String remainder = key.substring(PREFIX.length());
-        String profile = remainder.substring(0, remainder.indexOf("."));
-        return environment.acceptsProfiles(profile);
+        return isNotProfileSpecific(key) || environment.acceptsProfiles(extractProfile(key));
     }
 
     private boolean isNotProfileSpecific(String key) {
         return !key.startsWith(PREFIX);
     }
 
+    private String extractProfile(String key) {
+        String remainder = removePrefix(key);
+        return remainder.substring(0, remainder.indexOf("."));
+    }
+
+    private String removePrefix(String key) {
+        return key.substring(PREFIX.length());
+    }
+
     private String stripProfilePrefix(String key) {
         if (isNotProfileSpecific(key)) {
             return key;
         }
-        String remainder = key.substring(PREFIX.length());
+        String remainder = removePrefix(key);
         return remainder.substring(remainder.indexOf(".") + 1);
     }
 }

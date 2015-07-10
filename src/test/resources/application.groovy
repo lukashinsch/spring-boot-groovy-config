@@ -7,12 +7,12 @@ spring {
     profiles {
         test {
             info {
-                key = 'value'
+                key = 'test-value'
             }
         }
         test2 {
             info {
-                key2 = 'value2'
+                key = 'test2-value'
             }
         }
     }

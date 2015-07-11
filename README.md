@@ -9,6 +9,22 @@ This allows not only to specify the properties in a groovy DSL way, but also all
 
 Looks for `application.groovy` and `application-<profile>.groovy` on classpath and in current dir.
 
+## Howto use
+
+Maven
+```xml
+<dependency>
+    <groupId>eu.hinsch</groupId>
+    <artifactId>spring-boot-groovy-config</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+Gradle
+```groovy
+compile 'eu.hinsch:spring-boot-groovy-config:0.1.0'
+```
+
 ## Example 
 ```
 spring {

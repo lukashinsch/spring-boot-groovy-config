@@ -1,3 +1,8 @@
+[![Coverage Status](https://coveralls.io/repos/lukashinsch/spring-boot-groovy-config/badge.svg?branch=master)](https://coveralls.io/r/lukashinsch/spring-boot-groovy-config?branch=master)
+[![Build Status](https://travis-ci.org/lukashinsch/spring-boot-groovy-config.svg?branch=master)](https://travis-ci.org/lukashinsch/spring-boot-groovy-config)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.hinsch/spring-boot-groovy-config/badge.svg)](https://maven-badges.herokuapp.com/maven-central/eu.hinsch/spring-boot-groovy-config/)
+
+
 # spring-boot-groovy-config
 Configure spring boot application with groovy files.
 This allows not only to specify the properties in a groovy DSL way, but also allows for (small) logic and re-use inside the configuration (note that complex logic in configuration is usually not a good idea, but some if/else cases or dynamically calculated values (e.g. port numbers) can otherwise be cumbersome to configure).

@@ -24,6 +24,11 @@ public class GroovyPropertySourcesListenerIntegrationTest {
             assertThat(environment.getProperty("info.conflict"), is("main"));
             assertThat(environment.getProperty("info.key"), is(nullValue()));
         }
+
+        @Test
+        public void shouldContainDynamicValue() {
+            assertThat(environment.getProperty("info.dynamic"), is("3"));
+        }
     }
 
     @ActiveProfiles("test")

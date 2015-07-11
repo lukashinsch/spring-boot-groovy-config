@@ -1,6 +1,7 @@
 info {
     mainFile = 'some value'
     conflict = 'main'
+    dynamic = 1 + 2
 }
 
 spring {

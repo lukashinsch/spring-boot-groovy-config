@@ -17,9 +17,11 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
+version = '0.1.0'
+
 jar {
     baseName = 'spring-boot-groovy-config'
-    version = '0.1.0'
+    version = project.version
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
